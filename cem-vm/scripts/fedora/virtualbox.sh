@@ -15,7 +15,7 @@ sudo systemctl start dkms
 sudo systemctl enable dkms
 
 sudo modprobe loop
-sudo mount -o loop,ro ~/VBoxGuestAdditions.iso /mnt/
+sudo mount -o loop,ro /home/vagrant/VBoxGuestAdditions.iso /mnt/
 sudo /mnt/VBoxLinuxAdditions.run || :
 sudo umount /mnt/
 rm -f ~/VBoxGuestAdditions.iso

@@ -13,7 +13,7 @@ provisioners, and then generates two Vagrant box files, for:
   - VirtualBox
   - VMware
 
-The key variable parts of the build are in the [install_java_controller.sh](scripts/centos-6.7/install_java_controller.sh)
+The key variable parts of the build are in [install_java_controller.sh](scripts/centos-6.7/install_java_controller.sh)
 which installs these files, and the software packaged within them:
 
  - [Oracle JRE 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
@@ -25,6 +25,8 @@ which installs these files, and the software packaged within them:
  
  - `"cem_rpm": "EnergyManagement-Controller_5.1_64bit-44163_K9.x86_64.rpm"`
  - `"jre_rpm": "jre-8u91-linux-i586.rpm"`
+
+Note that you will also need to change the CEM RPM file name in the [install_java_controller.sh](scripts/centos-6.7/install_java_controller.sh).
 
 ## Requirements
 

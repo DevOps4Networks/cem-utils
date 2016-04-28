@@ -1,0 +1,109 @@
+{
+    "builders": [{
+	"type": "virtualbox-iso",
+	"guest_os_type": "RedHat_64",
+	"iso_url": "{{user `mirror`}}/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso",
+	"iso_checksum": "9d3fec5897be6b3fed4d3dda80b8fa7bb62c616bbfd4bdcd27295ca9b764f498",
+	"iso_checksum_type": "sha256",
+	"output_directory": "output-centos-6.7-x86_64-virtualbox",
+	"vm_name": "packer-centos-6.7-x86_64",
+	"disk_size": "{{user `disk_size`}}",
+	"headless": "{{user `headless`}}",
+	"http_directory": "http",
+	"boot_wait": "5s",
+	"boot_command": [
+	    "<esc>",
+	    "<wait>",
+	    "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6.7/anaconda-ks.cfg",
+	    "<enter>"
+	],
+	"ssh_wait_timeout": "60m",
+	"ssh_username": "vagrant",
+	"ssh_password": "vagrant",
+	"shutdown_command": "sudo poweroff",
+	"vboxmanage": [
+	    ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
+	    ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"]
+	]
+    }, {
+	"type": "vmware-iso",
+	"guest_os_type": "centos-64",
+	"iso_url": "{{user `mirror`}}/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso",
+	"iso_checksum": "9d3fec5897be6b3fed4d3dda80b8fa7bb62c616bbfd4bdcd27295ca9b764f498",
+	"iso_checksum_type": "sha256",
+	"output_directory": "output-centos-6.7-x86_64-vmware",
+	"vm_name": "packer-centos-6.7-x86_64_B",
+	"disk_size": "{{user `disk_size`}}",
+	"headless": "{{user `headless`}}",
+	"http_directory": "http",
+	"boot_wait": "5s",
+	"boot_command": [
+	    "<esc>",
+	    "<wait>",
+	    "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6.7/anaconda-ks.cfg",
+	    "<enter>"
+	],
+	"ssh_wait_timeout": "60m",
+	"ssh_username": "vagrant",
+	"ssh_password": "vagrant",
+	"shutdown_command": "sudo poweroff",
+	"vmx_data": {
+	    "cpuid.coresPerSocket": "1",
+	    "memsize": "{{user `memory`}}",
+	    "numvcpus": "{{user `cpus`}}"
+	}
+    }],
+    "provisioners": [{
+	"type": "shell",
+	"scripts": [
+	    "scripts/centos-6.7/init.sh",
+	    "scripts/common/vagrant.sh",
+	    "scripts/common/sshd.sh",
+	    "scripts/centos-6.7/locale.sh"
+	]
+    },{
+	"type": "shell",
+	"only": ["virtualbox-iso"],
+	"scripts": [
+	    "scripts/centos/virtualbox.sh"
+	]
+    },{
+	"type": "file",
+	"source": "{{user `cem_rpm`}}",
+	"destination": "/home/vagrant/{{user `cem_rpm`}}"
+    },{
+	"type": "file",
+	"source": "{{user `jre_rpm`}}",
+	"destination": "/home/vagrant/{{user `jre_rpm`}}"
+    },{
+	"type": "file",
+	"source": "cem_keypair.key",
+	"destination": "/home/vagrant/cem_keypair.key"
+    },{
+	"type": "shell",
+	"scripts": [
+	    "scripts/centos-6.7/install_java_controller.sh"
+	]
+    },{
+	"type": "shell",
+	"scripts": [
+	    "scripts/centos-6.7/cleanup.sh",
+	    "scripts/common/minimize.sh"
+	]
+    }],
+    "post-processors": [{
+	"type": "vagrant",
+	"compression_level": "{{user `compression_level`}}",
+	"output": "builds/{{.Provider}}-centos-6.7-x86_64.box"
+    }],
+    "variables": {
+	"compression_level": "6",
+	"cpus": "4",
+	"disk_size": "50000",
+	"headless": "false",
+	"memory": "4096",
+	"mirror": "http://mirrors.kernel.org/centos",
+	"cem_rpm": "EnergyManagement-Controller_5.1_64bit-44163_K9.x86_64.rpm",
+	"jre_rpm": "jre-8u91-linux-i586.rpm"
+    }
+}

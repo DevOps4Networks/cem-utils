@@ -1,14 +1,30 @@
-# IOx Dev VM
+# CEM Dev VM
 
+This set of Packer based VM build scripts is intended to create a "controller" VM for the 
+[Cisco Energy Manager](http://www.cisco.com/c/en/us/products/switches/energy-management-technology/index.html) 
+(CEM) system.
 
-**Current Ubuntu Version Used**: 14.04.4
+The architecture of that system is such that the controller communicates, using Rabbit MQ, with a server that is used
+to manage controllers via a web UI. The server aspect itself is not in scope here.
 
-This example build configuration installs and configures Ubuntu 14.04 x86_64 minimal using Ansible, and then generates two Vagrant box files, for:
+This build configuration installs and configures Centos 6.7 x86_64 minimal using Packer and various shell 
+provisioners, and then generates two Vagrant box files, for:
 
   - VirtualBox
   - VMware
 
-The example can be modified to use more Ansible roles, plays, and included playbooks to fully configure (or partially) configure a box file suitable for deployment for development environments.
+The key variable parts of the build are in [install_java_controller.sh](scripts/centos-6.7/install_java_controller.sh)
+which installs these files, and the software packaged within them:
+
+ - [Oracle JRE 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
+ - [CEM Controller CentOS RPM](https://software.cisco.com/download/release.html?mdfid=285963719&flowid=46142&softwareid=285994366&release=5.1.0&relind=AVAILABLE&rellifecycle=&reltype=latest) 
+ - A "cem_keypair.key" file, which you will need to obtain from the server and place in the build directory
+ 
+ The JRE and CEM controller install files need to be placed in locations defined by these variable in the 
+ [centos-6.7-x86_64.json](./centos-6.7-x86_64.json) file (values shown are example only):
+ 
+ - `"cem_rpm": "EnergyManagement-Controller_5.1_64bit-44163_K9.x86_64.rpm"`
+ - `"jre_rpm": "jre-8u91-linux-i586.rpm"`
 
 ## Requirements
 
@@ -18,26 +34,15 @@ The following software must be installed/present on your local machine before yo
   - [Vagrant](http://vagrantup.com/)
   - [VirtualBox](https://www.virtualbox.org/) (if you want to build the VirtualBox box)
   - [VMware Fusion](http://www.vmware.com/products/fusion/) (or Workstation - if you want to build the VMware box)
-  - [Ansible](http://docs.ansible.com/intro_installation.html)
-
-You will also need some Ansible roles installed so they can be used in the building of the VM. To install the roles:
-
-  1. Run `ansible-galaxy install -r requirements.yml` in this directory.
-  2. If your local Ansible roles path is not the default (`/etc/ansible/roles`), update the `role_paths` inside `ubuntu1404.json` to match your custom location.
-
-If you don't have Ansible installed (perhaps you're using a Windows PC?), you can simply clone the required Ansible roles from GitHub directly (use [Ansible Galaxy](https://galaxy.ansible.com/) to get the GitHub repository URLs for each role listed in `requirements.txt`), and update the `role_paths` variable to match the location of the cloned role.
 
 ## Usage
 
-Make sure all the required software (listed above) is installed, then cd to the directory containing this README.md file, and run:
+The [build.sh](./build.sh) script illustrates usage.
 
-    $ packer build ubuntu1404.json
+If you want to only build a box for one of the supported virtualization platforms 
+(e.g. only build the VMware box), add `--only=vmware-iso` to the `packer build` command:
 
-After a few minutes, Packer should tell you the box was generated successfully.
-
-If you want to only build a box for one of the supported virtualization platforms (e.g. only build the VMware box), add `--only=vmware-iso` to the `packer build` command:
-
-    $ packer build --only=vmware-iso ubuntu1404.json
+    $ packer build --only=vmware-iso centos-6.7-x86_64.json
 
 ## Acknowledgements
 

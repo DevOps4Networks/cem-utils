@@ -13,7 +13,7 @@ provisioners, and then generates two Vagrant box files, for:
   - VirtualBox
   - VMware
 
-The key variable parts of the build are in [install_java_controller.sh](scripts/centos-6.7/install_java_controller.sh)
+The key variable parts of the build are in the [install_java_controller.sh](scripts/centos-6.7/install_java_controller.sh)
 which installs these files, and the software packaged within them:
 
  - [Oracle JRE 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
@@ -55,7 +55,3 @@ MIT license.
 ## Author Information
 
 Created in 2016 by [Nathan Sowatskey](https://github.com/DevOps4Networks)
-
-
-#Acknowledgements
-

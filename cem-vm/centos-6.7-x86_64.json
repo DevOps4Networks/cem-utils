@@ -104,6 +104,6 @@
 	"memory": "4096",
 	"mirror": "http://mirrors.kernel.org/centos",
 	"cem_rpm": "EnergyManagement-Controller_5.1_64bit-44163_K9.x86_64.rpm",
-	"jre_rpm": "jre-8u91-linux-i586.rpm"
+	"jre_rpm": "jre-8u91-linux-x64.rpm"
     }
 }
